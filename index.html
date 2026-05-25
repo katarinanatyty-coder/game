@@ -97,9 +97,44 @@
       font-size: 14px;
     }
 
+    .topic-filter {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 18px;
+      margin-top: 18px;
+    }
+
+    .topic-filter label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .topic-filter select {
+      width: 100%;
+      max-width: 420px;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 2px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .topic-filter select:focus {
+      border-color: var(--primary);
+    }
+
+    .topic-filter p {
+      margin: 10px 0 0;
+    }
+
     .modes {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
       gap: 16px;
       margin-top: 22px;
     }
@@ -241,6 +276,42 @@
 
     .feedback.active { display: block; }
 
+    .command-template {
+      margin: 18px 0 14px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #211b33;
+      color: #fff;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: clamp(18px, 3vw, 26px);
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 96px;
+      padding: 2px 10px;
+      border-bottom: 3px solid #fff;
+      color: #d8cdfd;
+      text-align: center;
+    }
+
+    .command-input {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .command-input:focus {
+      border-color: var(--primary);
+    }
+
     code {
       background: #f2efff;
       color: var(--primary-dark);
@@ -267,6 +338,34 @@
       font-weight: 950;
       color: var(--primary);
       margin: 12px 0;
+    }
+
+    .rank-card {
+      margin: 22px auto;
+      max-width: 520px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(61, 43, 120, 0.08);
+    }
+
+    .rank-card img {
+      width: 100%;
+      max-height: 340px;
+      object-fit: cover;
+      border-radius: 20px;
+      display: block;
+      margin-bottom: 16px;
+    }
+
+    .rank-card h2 {
+      margin-bottom: 8px;
+    }
+
+    .rank-card p {
+      margin-bottom: 0;
+      font-size: 18px;
     }
 
     .mistakes {
@@ -320,6 +419,14 @@
         Ошибки сохраняются в браузере, чтобы потом можно было повторить сложные команды.
       </p>
 
+      <div class="topic-filter">
+        <label for="topicSelect"><strong>Тема для режима «Повторить всё»</strong></label>
+        <select id="topicSelect">
+          <option value="all">Все темы</option>
+        </select>
+        <p>Можно пройти все вопросы или выбрать одну тему: Консоль, Git, Ветки Git, Git flow, .gitignore, SSH, Markdown.</p>
+      </div>
+
       <div class="modes">
         <div class="mode-card">
           <div>
@@ -332,9 +439,17 @@
         <div class="mode-card">
           <div>
             <h3>📚 Повторить всё</h3>
-            <p>Полный режим: все вопросы по консоли и Git из твоих файлов.</p>
+            <p>Полный режим: все вопросы по выбранной теме или по всем темам.</p>
           </div>
           <button class="btn" id="allBtn">Начать</button>
+        </div>
+
+        <div class="mode-card">
+          <div>
+            <h3>✍️ Продолжи команду</h3>
+            <p>Часть команды скрыта. Нужно ввести недостающий фрагмент точно.</p>
+          </div>
+          <button class="btn" id="inputBtn">Начать</button>
         </div>
 
         <div class="mode-card" id="mistakesModeCard">
@@ -374,6 +489,34 @@
       </div>
     </section>
 
+    <section id="inputGameScreen" class="screen">
+      <div class="top">
+        <div class="badge">Вопрос <span id="inputCurrentNumber">1</span>/<span id="inputTotalNumber">10</span></div>
+        <div class="badge">Счёт: <span id="inputScore">0</span></div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">Режим: Продолжи команду</div>
+        <div class="stat" id="inputTopicLabel">Тема</div>
+      </div>
+
+      <div class="question-box">
+        <h2 id="inputQuestionText">Вопрос</h2>
+        <p>Введи скрытую часть команды. Регистр и пробелы внутри команды важны.</p>
+        <div class="command-template" id="commandTemplate"></div>
+        <input id="commandInput" class="command-input" autocomplete="off" placeholder="Введи недостающую часть" />
+      </div>
+
+      <div class="feedback active" id="inputFeedback">
+        <p id="inputFeedbackText">После ввода нажми «Проверить».</p>
+        <div class="actions">
+          <button class="btn" id="checkInputBtn">Проверить</button>
+          <button class="btn secondary" id="nextInputBtn" disabled>Дальше</button>
+          <button class="btn secondary" id="inputHomeBtn">В меню</button>
+        </div>
+      </div>
+    </section>
+
     <section id="resultScreen" class="screen">
       <div class="result">
         <div class="badge">Готово 🎉</div>
@@ -381,6 +524,12 @@
         <p>Твой результат:</p>
         <div class="result-score"><span id="finalScore">0</span>/<span id="finalTotal">10</span></div>
         <p id="resultText"></p>
+
+        <div class="rank-card" id="rankCard">
+          <img id="rankImage" src="" alt="Котик-результат" />
+          <h2 id="rankTitle"></h2>
+          <p id="rankDescription"></p>
+        </div>
 
         <div id="mistakesBlock"></div>
 
@@ -460,6 +609,55 @@
       {id:"md-br",topic:"Markdown",question:"Как сделать перенос строки через HTML-тег?",correct:"<br>",options:["<br>","---","##"],explanation:"`<br>` добавляет перенос строки."}
     ];
 
+
+    const inputQuestionsBank = allQuestions
+      .filter(item => item.correct.length >= 4)
+      .map(item => {
+        const parts = makeInputTask(item.correct);
+        return {
+          ...item,
+          visibleCommand: parts.visibleCommand,
+          missingPart: parts.missingPart
+        };
+      });
+
+    function makeInputTask(command) {
+      const variants = [
+        "git ",
+        "git branch ",
+        "git checkout ",
+        "git diff ",
+        "git log ",
+        "echo ",
+        "rm ",
+        "mkdir ",
+        "touch ",
+        "cat "
+      ];
+
+      const prefix = variants.find(item => command.startsWith(item) && command.length > item.length + 1);
+
+      if (prefix) {
+        return {
+          visibleCommand: prefix + "<span class='blank'>...</span>",
+          missingPart: command.slice(prefix.length)
+        };
+      }
+
+      const firstSpace = command.indexOf(" ");
+      if (firstSpace > 0 && firstSpace < command.length - 1) {
+        return {
+          visibleCommand: command.slice(0, firstSpace + 1) + "<span class='blank'>...</span>",
+          missingPart: command.slice(firstSpace + 1)
+        };
+      }
+
+      return {
+        visibleCommand: "<span class='blank'>...</span>",
+        missingPart: command
+      };
+    }
+
     const mistakeStorageKey = "commandTrainerMistakesV2";
 
     let questions = [];
@@ -468,16 +666,23 @@
     let currentMode = "random";
     let currentModeLabel = "10 рандомных карточек";
     let sessionMistakes = [];
+    let inputQuestions = [];
+    let inputIndex = 0;
+    let inputModeScore = 0;
+    let inputAnswered = false;
 
     const startScreen = document.getElementById("startScreen");
     const gameScreen = document.getElementById("gameScreen");
     const resultScreen = document.getElementById("resultScreen");
+    const inputGameScreen = document.getElementById("inputGameScreen");
 
     const randomBtn = document.getElementById("randomBtn");
     const allBtn = document.getElementById("allBtn");
+    const inputBtn = document.getElementById("inputBtn");
     const mistakesBtn = document.getElementById("mistakesBtn");
     const mistakesModeCard = document.getElementById("mistakesModeCard");
     const mistakesModeText = document.getElementById("mistakesModeText");
+    const topicSelect = document.getElementById("topicSelect");
 
     const currentNumber = document.getElementById("currentNumber");
     const totalNumber = document.getElementById("totalNumber");
@@ -494,13 +699,28 @@
     const finalScore = document.getElementById("finalScore");
     const finalTotal = document.getElementById("finalTotal");
     const resultText = document.getElementById("resultText");
+    const rankImage = document.getElementById("rankImage");
+    const rankTitle = document.getElementById("rankTitle");
+    const rankDescription = document.getElementById("rankDescription");
     const mistakesBlock = document.getElementById("mistakesBlock");
     const againBtn = document.getElementById("againBtn");
     const toMenuBtn = document.getElementById("toMenuBtn");
     const clearMistakesBtn = document.getElementById("clearMistakesBtn");
 
+    const inputCurrentNumber = document.getElementById("inputCurrentNumber");
+    const inputTotalNumber = document.getElementById("inputTotalNumber");
+    const inputScore = document.getElementById("inputScore");
+    const inputTopicLabel = document.getElementById("inputTopicLabel");
+    const inputQuestionText = document.getElementById("inputQuestionText");
+    const commandTemplate = document.getElementById("commandTemplate");
+    const commandInput = document.getElementById("commandInput");
+    const inputFeedbackText = document.getElementById("inputFeedbackText");
+    const checkInputBtn = document.getElementById("checkInputBtn");
+    const nextInputBtn = document.getElementById("nextInputBtn");
+    const inputHomeBtn = document.getElementById("inputHomeBtn");
+
     function showScreen(screen) {
-      [startScreen, gameScreen, resultScreen].forEach(item => item.classList.remove("active"));
+      [startScreen, gameScreen, inputGameScreen, resultScreen].forEach(item => item.classList.remove("active"));
       screen.classList.add("active");
       if (screen === startScreen) updateMistakeModeState();
     }
@@ -521,6 +741,22 @@
       localStorage.setItem(mistakeStorageKey, JSON.stringify([...new Set(ids)]));
     }
 
+    function initTopicSelect() {
+      const topics = [...new Set(allQuestions.map(item => item.topic))].sort();
+      topics.forEach(topic => {
+        const option = document.createElement("option");
+        option.value = topic;
+        option.textContent = topic;
+        topicSelect.appendChild(option);
+      });
+    }
+
+    function getSelectedTopicQuestions() {
+      const selectedTopic = topicSelect.value;
+      if (selectedTopic === "all") return allQuestions;
+      return allQuestions.filter(item => item.topic === selectedTopic);
+    }
+
     function updateMistakeModeState() {
       const ids = getStoredMistakeIds();
       if (ids.length === 0) {
@@ -531,6 +767,86 @@
         mistakesBtn.disabled = false;
         mistakesModeCard.classList.remove("disabled");
         mistakesModeText.textContent = `Есть ошибок для повтора: ${ids.length}. Они будут перемешаны с другими вопросами.`;
+      }
+    }
+
+
+    function startInputMode() {
+      const selectedTopic = topicSelect.value;
+      const source = selectedTopic === "all"
+        ? inputQuestionsBank
+        : inputQuestionsBank.filter(item => item.topic === selectedTopic);
+
+      inputQuestions = shuffle(source).slice(0, 10);
+      inputIndex = 0;
+      inputModeScore = 0;
+      sessionMistakes = [];
+      inputTotalNumber.textContent = inputQuestions.length;
+      inputScore.textContent = inputModeScore;
+
+      if (inputQuestions.length === 0) {
+        showScreen(startScreen);
+        return;
+      }
+
+      showScreen(inputGameScreen);
+      renderInputQuestion();
+    }
+
+    function renderInputQuestion() {
+      const item = inputQuestions[inputIndex];
+      inputAnswered = false;
+
+      inputCurrentNumber.textContent = inputIndex + 1;
+      inputScore.textContent = inputModeScore;
+      inputTopicLabel.textContent = "Тема: " + item.topic;
+      inputQuestionText.textContent = item.question;
+      commandTemplate.innerHTML = item.visibleCommand;
+      commandInput.value = "";
+      commandInput.disabled = false;
+      commandInput.focus();
+      inputFeedbackText.textContent = "После ввода нажми «Проверить».";
+      checkInputBtn.disabled = false;
+      nextInputBtn.disabled = true;
+    }
+
+    function normalizeAnswer(value) {
+      return value.trim().replace(/\s+/g, " ");
+    }
+
+    function checkInputAnswer() {
+      if (inputAnswered) return;
+
+      const item = inputQuestions[inputIndex];
+      const userAnswer = normalizeAnswer(commandInput.value);
+      const correctAnswer = normalizeAnswer(item.missingPart);
+
+      inputAnswered = true;
+      commandInput.disabled = true;
+      checkInputBtn.disabled = true;
+      nextInputBtn.disabled = false;
+
+      if (userAnswer === correctAnswer) {
+        inputModeScore++;
+        inputScore.textContent = inputModeScore;
+        inputFeedbackText.innerHTML = `<strong>Верно!</strong><br>Полная команда: <code>${item.correct}</code><br>${item.explanation}`;
+      } else {
+        sessionMistakes.push(item);
+        setStoredMistakeIds([...getStoredMistakeIds(), item.id]);
+        inputFeedbackText.innerHTML = `<strong>Почти.</strong><br>Нужно было ввести: <code>${item.missingPart}</code><br>Полная команда: <code>${item.correct}</code><br>${item.explanation}`;
+      }
+    }
+
+    function nextInputQuestion() {
+      inputIndex++;
+      if (inputIndex >= inputQuestions.length) {
+        score = inputModeScore;
+        questions = inputQuestions;
+        currentMode = "input";
+        currentModeLabel = "Продолжи команду";
+        showResult();
+      } else {
+        renderInputQuestion();
       }
     }
 
@@ -546,8 +862,10 @@
       }
 
       if (mode === "all") {
-        currentModeLabel = "Повторить всё";
-        questions = shuffle(allQuestions);
+        const selectedTopic = topicSelect.value;
+        const selectedQuestions = getSelectedTopicQuestions();
+        currentModeLabel = selectedTopic === "all" ? "Повторить всё: все темы" : "Повторить всё: " + selectedTopic;
+        questions = shuffle(selectedQuestions);
       }
 
       if (mode === "mistakes") {
@@ -638,8 +956,31 @@
         resultText.textContent = "Нормальный старт. Ниже список команд, которые стоит закрепить.";
       }
 
+      renderRank();
       renderMistakes();
       showScreen(resultScreen);
+    }
+
+    function renderRank() {
+      const mistakesCount = questions.length - score;
+
+      if (mistakesCount === 0) {
+        rankImage.src = "assets/cat-general.png";
+        rankTitle.textContent = "Вам присвоена должность Генерал познания";
+        rankDescription.textContent = "Даже гранит науки трещит на фоне вас";
+        return;
+      }
+
+      if (mistakesCount >= 1 && mistakesCount <= 3) {
+        rankImage.src = "assets/cat-shock.png";
+        rankTitle.textContent = "Вам присвоена должность Охекотик";
+        rankDescription.textContent = "Вы в шоке, но продолжаете идти к цели";
+        return;
+      }
+
+      rankImage.src = "assets/cat-sleep.png";
+      rankTitle.textContent = "Продолжайте медленно лежать к своей цели";
+      rankDescription.textContent = "Главное — не останавливаться. Даже если пока хочется просто полежать.";
     }
 
     function renderMistakes() {
@@ -680,13 +1021,27 @@
 
     randomBtn.addEventListener("click", () => startGame("random"));
     allBtn.addEventListener("click", () => startGame("all"));
+    inputBtn.addEventListener("click", startInputMode);
     mistakesBtn.addEventListener("click", () => startGame("mistakes"));
     nextBtn.addEventListener("click", nextQuestion);
     homeBtn.addEventListener("click", () => showScreen(startScreen));
-    againBtn.addEventListener("click", () => startGame(currentMode));
+    inputHomeBtn.addEventListener("click", () => showScreen(startScreen));
+    checkInputBtn.addEventListener("click", checkInputAnswer);
+    nextInputBtn.addEventListener("click", nextInputQuestion);
+    commandInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        if (!inputAnswered) checkInputAnswer();
+        else nextInputQuestion();
+      }
+    });
+    againBtn.addEventListener("click", () => {
+      if (currentMode === "input") startInputMode();
+      else startGame(currentMode);
+    });
     toMenuBtn.addEventListener("click", () => showScreen(startScreen));
     clearMistakesBtn.addEventListener("click", clearMistakes);
 
+    initTopicSelect();
     updateMistakeModeState();
   </script>
 </body>
